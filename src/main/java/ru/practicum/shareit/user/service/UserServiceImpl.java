@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto create(UserDto userDto) {
-        validator(userDto.getEmail());
+        validator(userDto.getEmail(), null);
         log.info("Пользователь создан");
         return userStorage.create(userDto);
     }
@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User update(long id, UserDto user) {
         if (user.getEmail() != null) {
-            validator(user.getEmail());
+            validator(user.getEmail(), id);
         }
         return userStorage.update(id, user);
     }
@@ -55,16 +55,16 @@ public class UserServiceImpl implements UserService {
         userStorage.delete(id);
     }
 
-    private void validator(String email) {
+    private void validator(String email, Long userId) {
         Collection<User> users = userStorage.findAll();
-        if (checker(users, email)) {
+        if (checker(users, email, userId)) {
             log.warn("Пользователь с таким e-mail уже существует");
             throw new ValidationException("Пользователь с таким e-mail уже существует");
         }
     }
 
-    private boolean checker(Collection<User> users,String email) {
+    private boolean checker(Collection<User> users, String email, Long userId) {
         return users.stream()
-                .anyMatch(repoUser -> repoUser.getEmail().equals(email));
+                .anyMatch(repoUser -> (userId == null || repoUser.getId() != userId) && repoUser.getEmail().equals(email));
     }
 }
