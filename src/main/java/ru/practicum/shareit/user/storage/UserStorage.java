@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface UserStorage {
     Collection<User> findAll();
 
-    Optional<User> getById(long id);
+    Optional<User> findById(long id);
 
     UserDto create(UserDto userDto);
 

@@ -22,8 +22,8 @@ public class ItemStorageImpl implements ItemStorage {
 
     @Override
     public Collection<ItemDto> findAll(long userId) {
-        Collection<Item> userItems = items.getOrDefault(userId,  Collections.emptyList());
-        return userItems.stream()
+        return items.getOrDefault(userId, Collections.emptyList())
+                .stream()
                 .map(itemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
@@ -78,20 +78,20 @@ public class ItemStorageImpl implements ItemStorage {
                 .filter(item1 -> item1.getId() == itemId)
                 .findFirst().orElseThrow(() -> {
                     log.warn("Вещь с itemId: {} не найдена", itemId);
-                    throw new ObjectNotFoundException("Вещь не найдена!");
-                })
-                ;
-        if (item.getName() != null) {
+                    return new ObjectNotFoundException("Вещь не найдена!");
+                });
+
+        if (item.getName() != null && !item.getName().isEmpty()) {
             repoItem.setName(item.getName());
         }
-        if (item.getDescription() != null) {
+        if (item.getDescription() != null && !item.getDescription().isEmpty()) {
             repoItem.setDescription(item.getDescription());
         }
         if (item.getAvailable() != null) {
             repoItem.setAvailable(item.getAvailable());
         }
-        items.get(userId).removeIf(item1 -> item1.getId() == itemId);
-        items.get(userId).add(repoItem);
+
         return itemMapper.toItemDto(repoItem);
     }
+
 }

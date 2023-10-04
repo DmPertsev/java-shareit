@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getById(long id) {
         log.info("Пользователь с id{} отправлен", id);
-        return userStorage.getById(id).orElseThrow(() -> {
+        return userStorage.findById(id).orElseThrow(() -> {
             log.warn("User with id {} not found", id);
             throw new ObjectNotFoundException("User not found");
         });

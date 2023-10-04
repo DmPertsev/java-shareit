@@ -9,8 +9,10 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.storage.ItemStorage;
 import ru.practicum.shareit.user.storage.UserStorage;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -21,7 +23,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto create(long userId, ItemDto itemDto) {
-        userStorage.getById(userId).orElseThrow(() -> {
+        userStorage.findById(userId).orElseThrow(() -> {
             log.warn("User not found");
             throw new ObjectNotFoundException("User not found");
         });
@@ -55,11 +57,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Collection<ItemDto> searchItem(String text) {
+    public List<ItemDto> searchItem(String text) {
         log.info("Search results sent");
         if (text.isBlank()) {
             return Collections.emptyList();
         }
-        return itemStorage.searchItem(text);
+        Collection<ItemDto> result = itemStorage.searchItem(text);
+        return new ArrayList<>(result);
     }
 }

@@ -26,7 +26,7 @@ public class UserStorageImpl implements UserStorage {
     }
 
     @Override
-    public Optional<User> getById(long id) {
+    public Optional<User> findById(long id) {
         return Optional.ofNullable(users.get(id));
     }
 
