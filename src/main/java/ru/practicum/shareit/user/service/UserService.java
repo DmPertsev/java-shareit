@@ -1,19 +1,21 @@
 package ru.practicum.shareit.user.service;
 
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.exception.DuplicateEmailException;
+import ru.practicum.shareit.user.exception.UserNotFoundException;
+import ru.practicum.shareit.user.exception.ValidationException;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface UserService {
 
-    Collection<User> findAll();
-
-    User getById(long id);
-
     UserDto create(UserDto userDto);
 
-    User update(long id, UserDto user);
+    UserDto update(Long userId, UserDto userDto);
 
-    void delete(long id);
+    UserDto get(Long userId);
+
+    void delete(Long userId);
+
+    List<UserDto> get();
 }

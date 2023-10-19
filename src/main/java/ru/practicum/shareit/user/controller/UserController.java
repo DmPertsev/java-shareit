@@ -1,19 +1,21 @@
 package ru.practicum.shareit.user.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.user.exception.DuplicateEmailException;
+import ru.practicum.shareit.user.exception.UserNotFoundException;
+import ru.practicum.shareit.user.exception.ValidationException;
 
 import javax.validation.Valid;
-import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/users")
-@RequiredArgsConstructor(onConstructor_ = @Autowired)
+@RequiredArgsConstructor
 public class UserController {
+
     private final UserService userService;
 
     @PostMapping
@@ -21,23 +23,23 @@ public class UserController {
         return userService.create(userDto);
     }
 
-    @PatchMapping("/{id}")
-    public User update(@PathVariable long id, @RequestBody UserDto userDto) {
-        return userService.update(id, userDto);
+    @PatchMapping("/{userId}")
+    public UserDto update(@PathVariable Long userId, @RequestBody UserDto userDto) {
+        return userService.update(userId, userDto);
     }
 
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable long id) {
-        userService.delete(id);
+    @GetMapping("/{userId}")
+    public UserDto get(@PathVariable Long userId) {
+        return userService.get(userId);
+    }
+
+    @DeleteMapping("/{userId}")
+    public void delete(@PathVariable Long userId) {
+        userService.delete(userId);
     }
 
     @GetMapping
-    public Collection<User> findAll() {
-        return userService.findAll();
-    }
-
-    @GetMapping("/{id}")
-    public User getById(@PathVariable long id) {
-        return userService.getById(id);
+    public List<UserDto> get() {
+        return userService.get();
     }
 }
