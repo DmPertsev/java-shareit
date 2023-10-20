@@ -28,13 +28,19 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserDto(user);
     }
 
-    @Override
     public UserDto update(Long userId, UserDto userDto) {
         userDto.setId(userId);
-        User repoUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("user not found"));
-        User user = UserMapper.matchUser(userDto, repoUser);
-        user = userRepository.save(user);
-        return userMapper.toUserDto(user);
+        User repoUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        User existingUserByEmail = userRepository.findByEmail(userDto.getEmail());
+        if (existingUserByEmail != null && !existingUserByEmail.getId().equals(userId)) {
+            throw new DuplicateEmailException("Email already exists");
+        }
+        User userToUpdate = UserMapper.matchUser(userDto, repoUser);
+        User updatedUser = userRepository.save(userToUpdate);
+
+        return userMapper.toUserDto(updatedUser);
     }
 
     @Override
