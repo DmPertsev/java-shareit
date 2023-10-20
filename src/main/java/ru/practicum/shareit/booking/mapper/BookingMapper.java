@@ -1,34 +1,48 @@
 package ru.practicum.shareit.booking.mapper;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.dto.BookingInfoDto;
+import ru.practicum.shareit.booking.dto.BookingDtoShort;
+import ru.practicum.shareit.booking.dto.BookingDtoShortResponse;
+import ru.practicum.shareit.booking.dto.CreateBookingDto;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.item.dto.ItemInfoDto;
-import ru.practicum.shareit.user.dto.UserInfoDto;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BookingMapper {
 
-    public static BookingInfoDto toBookingInfoDto(Booking booking) {
-        return BookingInfoDto.builder()
+    public static Booking toBooking(CreateBookingDto dto) {
+        return Booking.builder()
+                .start(dto.getStart())
+                .end(dto.getEnd())
+                .build();
+    }
+
+    public static BookingDtoShort toDtoShort(Booking booking) {
+        return BookingDtoShort.builder()
+                .id(booking.getId())
+                .bookerId(booking.getBooker().getId())
+                .build();
+    }
+
+    public static BookingDto toDto(Booking booking) {
+        return BookingDto.builder()
                 .id(booking.getId())
                 .start(booking.getStart())
                 .end(booking.getEnd())
-                .item(ItemInfoDto.builder()
-                        .id(booking.getItem().getId())
-                        .name(booking.getItem().getName())
-                        .build())
-                .booker(UserInfoDto.builder()
-                        .id(booking.getBooker().getId())
-                        .build())
+                .item(new BookingDto.Item(booking.getItem().getId(), booking.getItem().getName()))
+                .booker(new BookingDto.Booker(booking.getBooker().getId(), booking.getBooker().getName()))
                 .status(booking.getStatus())
                 .build();
     }
 
-    public static Booking toBooking(BookingDto bookingDto) {
-        return Booking.builder()
-                .id(bookingDto.getId())
-                .start(bookingDto.getStart())
-                .end(bookingDto.getEnd())
+    public static BookingDtoShortResponse toDtoShortResponse(Booking booking) {
+        return BookingDtoShortResponse.builder()
+                .id(booking.getId())
+                .start(booking.getStart())
+                .end(booking.getEnd())
+                .itemId(booking.getItem().getId())
+                .bookerId(booking.getBooker().getId())
                 .build();
     }
 }

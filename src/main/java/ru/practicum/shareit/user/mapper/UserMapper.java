@@ -1,23 +1,26 @@
 package ru.practicum.shareit.user.mapper;
 
-import org.mapstruct.Mapper;
-import org.springframework.jmx.export.annotation.ManagedOperationParameter;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import ru.practicum.shareit.user.dto.CreateUserDto;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.dto.UserInfoDto;
 import ru.practicum.shareit.user.model.User;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class UserMapper {
+    public static User createUserDtoToUser(CreateUserDto createUserDto) {
+        User user = new User();
+        user.setId(createUserDto.getId());
+        user.setName(createUserDto.getName());
+        user.setEmail(createUserDto.getEmail());
+        return user;
+    }
 
-
-@Mapper(componentModel = "spring")
-public interface UserMapper {
-    UserInfoDto toUserInfoDto(User user);
-    UserDto toUserDto(User user);
-    User toUser(UserDto userDto);
-    static User matchUser(UserDto userDto, User user) {
-        return User.builder()
-                .id(userDto.getId())
-                .name(userDto.getName() == null ? user.getName() : userDto.getName())
-                .email(userDto.getEmail() == null ? user.getEmail() : userDto.getEmail())
-                .build();
+    public static UserDto toDto(User user) {
+        return new UserDto(
+                user.getId(),
+                user.getName(),
+                user.getEmail()
+        );
     }
 }

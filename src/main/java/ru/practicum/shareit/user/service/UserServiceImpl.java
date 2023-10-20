@@ -1,12 +1,12 @@
 package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.exception.UserNotFoundException;
+import ru.practicum.shareit.user.dto.CreateUserDto;
+import ru.practicum.shareit.user.dto.UpdateUserDto;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.exception.DuplicateEmailException;
-import ru.practicum.shareit.user.exception.UserNotFoundException;
-import ru.practicum.shareit.user.exception.ValidationException;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -15,50 +15,55 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    private final UserMapper userMapper;
     private final UserRepository userRepository;
 
+
+    @Transactional(readOnly = true)
     @Override
-    public UserDto create(UserDto userDto) {
-        User user = userMapper.toUser(userDto);
-        user = userRepository.save(user);
-        return userMapper.toUserDto(user);
+    public List<UserDto> getAll() {
+        return userRepository.findAll().stream().map(UserMapper::toDto).collect(Collectors.toList());
     }
 
-    public UserDto update(Long userId, UserDto userDto) {
-        userDto.setId(userId);
-        User repoUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+    @Transactional(readOnly = true)
+    @Override
+    public UserDto getById(Long userId) {
+        return UserMapper.toDto(userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException("Такого пользователя нет!")));
+    }
 
-        User existingUserByEmail = userRepository.findByEmail(userDto.getEmail());
-        if (existingUserByEmail != null && !existingUserByEmail.getId().equals(userId)) {
-            throw new DuplicateEmailException("Email already exists");
+    @Transactional
+    @Override
+    public UserDto create(CreateUserDto createUserDto) {
+        User newUser = UserMapper.createUserDtoToUser(createUserDto);
+        userRepository.save(newUser);
+        return UserMapper.toDto(newUser);
+    }
+
+    @Transactional
+    @Override
+    public UserDto update(Long userId, UpdateUserDto updateUserDto) {
+        User updateUser = userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException("Такого пользователя нет!"));
+
+        if ((updateUserDto.getEmail() != null) && (!updateUserDto.getEmail().isBlank())) {
+            updateUser.setEmail(updateUserDto.getEmail());
         }
-        User userToUpdate = UserMapper.matchUser(userDto, repoUser);
-        User updatedUser = userRepository.save(userToUpdate);
 
-        return userMapper.toUserDto(updatedUser);
+        if ((updateUserDto.getName() != null) && (!updateUserDto.getName().isBlank())) {
+            updateUser.setName(updateUserDto.getName());
+        }
+
+        return UserMapper.toDto(updateUser);
     }
 
+    @Transactional
     @Override
-    public UserDto get(Long userId) {
-        User repoUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("user not found"));
-        return userMapper.toUserDto(repoUser);
-    }
-
-    @Override
-    public void delete(Long userId) {
+    public UserDto deleteById(Long userId) {
+        User delUser = userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException("Такого пользователя нет!"));
         userRepository.deleteById(userId);
-    }
-
-    @Override
-    public List<UserDto> get() {
-        List<User> users = userRepository.findAll();
-        return users.stream()
-                .map(userMapper::toUserDto)
-                .collect(Collectors.toList());
+        return UserMapper.toDto(delUser);
     }
 }

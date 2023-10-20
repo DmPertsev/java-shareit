@@ -1,56 +1,56 @@
 package ru.practicum.shareit.item.model;
 
-import lombok.*;
-import ru.practicum.shareit.requests.model.ItemRequest;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import ru.practicum.shareit.item.comment.CommentDto;
+import ru.practicum.shareit.booking.dto.BookingDtoShort;
 import ru.practicum.shareit.user.model.User;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.util.List;
 
-@Entity
-@Table(name = "items")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Entity
+@Table(name = "items")
 public class Item {
 
     @Id
+    @Column(name = "item_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
-    @NotBlank
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "description")
-    @NotBlank
     private String description;
 
     @Column(name = "is_available")
-    @NotNull
     private Boolean available;
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;
 
-    @ManyToOne
-    @JoinColumn(name = "request_id")
-    private ItemRequest request;
+    @Transient
+    private BookingDtoShort lastBooking;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Item)) return false;
-        return id != null && id.equals(((Item) o).getId());
-    }
+    @Transient
+    private BookingDtoShort nextBooking;
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
-    }
+    @Transient
+    private List<CommentDto> comments;
 }
