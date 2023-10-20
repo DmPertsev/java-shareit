@@ -5,8 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.practicum.shareit.booking.dto.BookingDtoShort;
-import ru.practicum.shareit.item.comment.CommentDto;
+import ru.practicum.shareit.booking.dto.BookingDtoShortResponse;
+import ru.practicum.shareit.item.comment.CommentDtoResponse;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-public class ItemDto {
+public class ItemDtoResponse {
 
     private Long id;
 
@@ -25,9 +25,9 @@ public class ItemDto {
 
     private Boolean available;
 
-    private BookingDtoShort lastBooking;
+    private BookingDtoShortResponse lastBooking;
 
-    private BookingDtoShort nextBooking;
+    private BookingDtoShortResponse nextBooking;
 
-    private List<CommentDto> comments;
+    private List<CommentDtoResponse> comments;
 }
