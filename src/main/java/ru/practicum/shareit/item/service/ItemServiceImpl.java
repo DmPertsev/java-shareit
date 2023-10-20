@@ -107,9 +107,7 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDto> get(Long userId) {
         User owner = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("user not found"));
         List<Item> repoItems = itemRepository.findAllByOwnerId(userId);
-        if (repoItems.isEmpty()) {
-            return new ArrayList<>();
-        }
+        if (repoItems.isEmpty()) {return new ArrayList<>();}
 
         List<ItemDto> itemDtoList = repoItems.stream()
                 .map(ItemMapper::toItemDto)
@@ -124,32 +122,32 @@ public class ItemServiceImpl implements ItemService {
             Optional<Booking> lastBooking = bookingRepository.findTop1BookingByItemIdAndEndIsBeforeAndStatusIs(
                     itemDto.getId(), LocalDateTime.now(), Status.APPROVED, SORT_DESC);
 
-            itemDto.setLastBooking(lastBooking.map(booking -> LastBookingDto.builder()
-                    .id(booking.getId())
-                    .bookerId(booking.getBooker().getId())
-                    .start(booking.getStart())
-                    .end(booking.getEnd())
-                    .build()).orElse(null));
+            itemDto.setLastBooking(lastBooking.isEmpty() ? LastBookingDto.builder().build() : LastBookingDto.builder()
+                    .id(lastBooking.get().getId())
+                    .bookerId(lastBooking.get().getBooker().getId())
+                    .start(lastBooking.get().getStart())
+                    .end(lastBooking.get().getEnd())
+                    .build());
 
             Optional<Booking> nextBooking = bookingRepository.findTop1BookingByItemIdAndEndIsAfterAndStatusIs(
                     itemDto.getId(), LocalDateTime.now(), Status.APPROVED, SORT_ASC);
 
-            itemDto.setNextBooking(nextBooking.map(booking -> NextBookingDto.builder()
-                    .id(booking.getId())
-                    .bookerId(booking.getBooker().getId())
-                    .start(booking.getStart())
-                    .end(booking.getEnd())
-                    .build()).orElse(null));
+            itemDto.setNextBooking(nextBooking.isEmpty() ? NextBookingDto.builder().build() : NextBookingDto.builder()
+                    .id(nextBooking.get().getId())
+                    .bookerId(nextBooking.get().getBooker().getId())
+                    .start(nextBooking.get().getStart())
+                    .end(nextBooking.get().getEnd())
+                    .build());
         }
 
         itemDtoList.sort(Comparator.comparing(o -> o.getLastBooking().getStart(),
                 Comparator.nullsLast(Comparator.reverseOrder())));
 
         for (ItemDto itemDto : itemDtoList) {
-            if (itemDto.getLastBooking() != null && itemDto.getLastBooking().getBookerId() == null) {
+            if (itemDto.getLastBooking().getBookerId() == null) {
                 itemDto.setLastBooking(null);
             }
-            if (itemDto.getNextBooking() != null && itemDto.getNextBooking().getBookerId() == null) {
+            if (itemDto.getNextBooking().getBookerId() == null) {
                 itemDto.setNextBooking(null);
             }
         }
