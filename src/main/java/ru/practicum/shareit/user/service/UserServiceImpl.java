@@ -70,4 +70,11 @@ public class UserServiceImpl implements UserService {
 
         return UserMapper.toDto(delUser);
     }
+
+    @Transactional(readOnly = true)
+    public void throwIfNotExist(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new ObjectNotFoundException("Пользователя нет: " + userId);
+        }
+    }
 }
