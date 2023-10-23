@@ -12,6 +12,7 @@ import javax.validation.constraints.Email;
 @NoArgsConstructor
 @Builder
 public class UpdateUserDto {
+
     private Long id;
 
     private String name;

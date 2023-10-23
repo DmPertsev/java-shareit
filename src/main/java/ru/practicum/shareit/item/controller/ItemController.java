@@ -38,18 +38,21 @@ public class ItemController {
     public ItemDto getById(@PathVariable Long itemId,
                            @RequestHeader(name = HEADER) Long userId) {
         log.info("Получен запрос GET /items/{}.", itemId);
+
         return itemService.getById(itemId, userId);
     }
 
     @GetMapping("/search")
     public List<ItemDto> search(@RequestParam String text) {
         log.info("Получен запрос GET /items/search.");
+
         return itemService.search(text);
     }
 
     @GetMapping
     public List<ItemDtoResponse> getByUserId(@RequestHeader(name = HEADER) Long userId) {
         log.info("Получен запрос GET /items.");
+
         return itemService.getByUserId(userId);
     }
 
@@ -58,6 +61,7 @@ public class ItemController {
     public ItemDto create(@RequestHeader(name = HEADER) Long userId,
                           @Valid @RequestBody CreateItemDto itemDto) {
         log.info("Получен запрос POST /items.");
+
         return itemService.create(userId, itemDto);
     }
 
@@ -66,6 +70,7 @@ public class ItemController {
                                     @RequestHeader(name = HEADER) Long userId,
                                     @Valid @RequestBody CreateCommentDto commentDto) {
         log.info("Получен запрос POST /items/{id}/comment.");
+
         return itemService.createComment(id, userId, commentDto);
     }
 
@@ -74,12 +79,14 @@ public class ItemController {
                           @RequestHeader(name = HEADER) Long userId,
                           @Valid @RequestBody UpdateItemDto itemDto) {
         log.debug("Получен запрос PATCH /items/{}.", itemId);
+
         return itemService.update(itemId, userId, itemDto);
     }
 
     @DeleteMapping("/{id}")
     public ItemDto delete(@PathVariable Long id) {
         log.debug("Получен запрос DELETE /items/{}.", id);
+
         return itemService.delete(id);
     }
 }

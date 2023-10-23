@@ -21,26 +21,8 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleUserNotFoundException(final UserNotFoundException exception) {
-        log.error("Такого пользователя нет! {}", exception.getMessage());
-        return new ErrorResponse(
-                exception.getMessage()
-        );
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleItemNotFoundException(final ItemNotFoundException exception) {
-        log.error("Такой вещи нет! {}", exception.getMessage());
-        return new ErrorResponse(
-                exception.getMessage()
-        );
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleBookingNotFoundException(final BookingNotFoundException exception) {
-        log.error("Такого бронирования нет! {}", exception.getMessage());
+    public ErrorResponse handlerNotFoundException(final ObjectNotFoundException exception) {
+        log.error("404 - Такого пользователя нет! {}", exception.getMessage());
         return new ErrorResponse(
                 exception.getMessage()
         );

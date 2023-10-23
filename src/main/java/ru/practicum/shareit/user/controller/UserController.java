@@ -25,17 +25,20 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping(path = "/users")
 public class UserController {
+
     private final UserService userService;
 
     @GetMapping()
     public List<UserDto> getAll() {
         log.info("Получен запрос GET /users.");
+
         return userService.getAll();
     }
 
     @GetMapping("/{id}")
     public UserDto getById(@PathVariable("id") Long userId) {
         log.info("Получен запрос GET /users/{}.", userId);
+
         return userService.getById(userId);
     }
 
@@ -43,6 +46,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto create(@Valid @RequestBody CreateUserDto createUserDto) {
         log.info("Получен запрос POST /users.");
+
         return userService.create(createUserDto);
     }
 
@@ -50,12 +54,14 @@ public class UserController {
     public UserDto update(@PathVariable("id") Long userId,
                           @Valid @RequestBody UpdateUserDto updateUserDto) {
         log.info("Получен запрос PATCH /users/{}.", userId);
+
         return userService.update(userId, updateUserDto);
     }
 
     @DeleteMapping("/{id}")
     public UserDto deleteById(@PathVariable("id") Long userId) {
         log.info("Получен запрос DELETE /users/{}.", userId);
+
         return userService.deleteById(userId);
     }
 }
