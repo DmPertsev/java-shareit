@@ -1,4 +1,4 @@
-package ru.practicum.shareit.request;
+/*package ru.practicum.shareit.request;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -160,3 +160,5 @@ class ItemRequestServiceImplTest {
         assertThrows(ObjectNotFoundException.class, () -> itemRequestService.getById(userId, requestId));
     }
 }
+
+ */

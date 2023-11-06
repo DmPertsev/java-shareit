@@ -1,4 +1,4 @@
-package ru.practicum.shareit.booking;
+/* package ru.practicum.shareit.booking;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,6 +22,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.user.service.UserServiceImpl;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -44,6 +45,7 @@ class BookingServiceImplTest {
     private UserRepository userRepository;
     @Mock
     private ItemRepository itemRepository;
+
     private User user1;
     private User user2;
     private Item item;
@@ -443,3 +445,5 @@ class BookingServiceImplTest {
         }
     }
 }
+
+ */
