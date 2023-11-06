@@ -1,8 +1,12 @@
 package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.exception.DuplicatedEmailException;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
 import ru.practicum.shareit.user.dto.CreateUserDto;
 import ru.practicum.shareit.user.dto.UpdateUserDto;
@@ -17,40 +21,41 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
     @Override
-    public List<UserDto> getAll() {
-        return userRepository.findAll()
-                .stream()
-                .map(UserMapper::toDto)
-                .collect(Collectors.toList());
+    public List<UserDto> getAll(Integer from, Integer size) {
+        Pageable pageable = PageRequest.of(from / size, size, Sort.by(Sort.Direction.ASC, "id"));
+
+        return userRepository.findAll(pageable).stream().map(UserMapper::toDto).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     @Override
     public UserDto getById(Long userId) {
+
         return UserMapper.toDto(userRepository.findById(userId).orElseThrow(
-                () -> new ObjectNotFoundException("Пользователя нет: " + userId)));
+                () -> new ObjectNotFoundException("Такого пользователя нет!")));
     }
 
     @Transactional
     @Override
     public UserDto create(CreateUserDto createUserDto) {
         User newUser = UserMapper.createUserDtoToUser(createUserDto);
-        userRepository.save(newUser);
 
-        return UserMapper.toDto(newUser);
+        return UserMapper.toDto(userRepository.save(newUser));
     }
 
     @Transactional
     @Override
     public UserDto update(Long userId, UpdateUserDto updateUserDto) {
         User updateUser = userRepository.findById(userId).orElseThrow(
-                () -> new ObjectNotFoundException("Пользователя нет: " + userId));
+                () -> new ObjectNotFoundException("Такого пользователя нет!"));
 
         if ((updateUserDto.getEmail() != null) && (!updateUserDto.getEmail().isBlank())) {
+            checkIfEmailExists(updateUserDto.getEmail());
             updateUser.setEmail(updateUserDto.getEmail());
         }
 
@@ -63,12 +68,14 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserDto deleteById(Long userId) {
-        User delUser = userRepository.findById(userId).orElseThrow(
-                () -> new ObjectNotFoundException("Пользователя нет: " + userId));
+    public void deleteById(Long userId) {
         userRepository.deleteById(userId);
+    }
 
-        return UserMapper.toDto(delUser);
+    private void checkIfEmailExists(String email) {
+        userRepository.findByEmail(email).ifPresent(user -> {
+            throw new DuplicatedEmailException(email);
+        });
     }
 
     @Transactional(readOnly = true)
