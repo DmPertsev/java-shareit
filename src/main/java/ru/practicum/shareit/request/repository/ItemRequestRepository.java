@@ -10,7 +10,7 @@ import java.util.List;
 public interface ItemRequestRepository extends JpaRepository<ItemRequest, Long> {
     List<ItemRequest> findAllByRequesterId(Long userId, Pageable pageable);
 
-    @Query("select i from ItemRequest i " +
-            "where i.requester.id <> ?1 ")
+    @Query("SELECT i FROM ItemRequest i " +
+            "WHERE i.requester.id <> ?1 ")
     List<ItemRequest> findAllByUserId(Long userId, Pageable pageable);
 }

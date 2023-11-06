@@ -28,12 +28,11 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Transactional(readOnly = true)
     @Override
     public ItemRequestDto getById(Long userId, Long requestId) {
-        if (!userRepository.existsById(userId)) {
-            throw new ObjectNotFoundException("Такого пользователя нет!");
-        }
+        userRepository.findById(userId).orElseThrow(
+                () -> new ObjectNotFoundException("Такого пользователя нет!"));
 
-        return ItemRequestMapper.toDto(itemRequestRepository.findById(requestId).orElseThrow(() ->
-                new ObjectNotFoundException("Такого запроса нет")));
+        return itemRequestRepository.findById(requestId).map(ItemRequestMapper::toDto)
+                .orElseThrow(() -> new ObjectNotFoundException("Такого запроса нет"));
     }
 
     @Transactional
