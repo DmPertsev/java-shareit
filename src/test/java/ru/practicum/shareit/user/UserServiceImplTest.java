@@ -121,16 +121,18 @@ class UserServiceImplTest {
 
     @Test
     void update_shouldThrowDuplicateEmailException() {
-        Long id = 1L;
+        Long userId = 1L;
         String newEmail = "newEmail@test.test";
 
-        UpdateUserDto dto = new UpdateUserDto(1L, "Alex", newEmail);
-        User user = new User(1L, "Alex", "newEmail@test.test");
+        UpdateUserDto dto = new UpdateUserDto(userId, "Alex", newEmail);
 
-        Mockito.when(userRepository.findById(id)).thenReturn(Optional.of(user));
+        User user = new User(userId, "Alex", newEmail);
+
+        Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         Mockito.when(userRepository.findByEmail(newEmail)).thenReturn(Optional.of(user));
 
-        assertThatThrownBy(() -> userService.update(id, dto)).isInstanceOf(DuplicatedEmailException.class);
+        assertThatThrownBy(() -> userService.update(userId, dto))
+                .isInstanceOf(DuplicatedEmailException.class);
     }
 
     @Test
