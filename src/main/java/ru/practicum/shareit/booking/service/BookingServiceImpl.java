@@ -54,23 +54,22 @@ public class BookingServiceImpl implements BookingService {
         userServiceImpl.throwIfNotExist(userId);
 
         try {
+            State bookingState = State.valueOf(state); // Parse the state value as an enum
             List<Booking> bookings;
             Pageable pageable = PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "start"));
-            switch (State.valueOf(state)) {
+
+            switch (bookingState) {
                 case ALL:
                     bookings = bookingRepository.findAllByItemOwnerId(userId, pageable);
                     break;
                 case CURRENT:
-                    bookings = bookingRepository.findAllByItemOwnerIdAndStartBeforeAndEndAfter(userId,
-                            LocalDateTime.now(), LocalDateTime.now(), pageable);
+                    bookings = bookingRepository.findAllByItemOwnerIdAndStartBeforeAndEndAfter(userId, LocalDateTime.now(), LocalDateTime.now(), pageable);
                     break;
                 case PAST:
-                    bookings = bookingRepository.findAllByItemOwnerIdAndEndBefore(userId, LocalDateTime.now(),
-                            pageable);
+                    bookings = bookingRepository.findAllByItemOwnerIdAndEndBefore(userId, LocalDateTime.now(), pageable);
                     break;
                 case FUTURE:
-                    bookings = bookingRepository.findAllByItemOwnerIdAndStartAfter(userId, LocalDateTime.now(),
-                            pageable);
+                    bookings = bookingRepository.findAllByItemOwnerIdAndStartAfter(userId, LocalDateTime.now(), pageable);
                     break;
                 case WAITING:
                     bookings = bookingRepository.findAllByItemOwnerIdAndStatus(userId, Status.WAITING, pageable);
@@ -79,11 +78,11 @@ public class BookingServiceImpl implements BookingService {
                     bookings = bookingRepository.findAllByItemOwnerIdAndStatus(userId, Status.REJECTED, pageable);
                     break;
                 default:
-                    throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
+                    throw new ValidationException("Unsupported state: " + state);
             }
             return bookings.stream().map(BookingMapper::toDto).collect(Collectors.toList());
-        } catch (RuntimeException e) {
-            throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
+        } catch (IllegalArgumentException e) {
+            throw new ValidationException("Invalid state: " + state);
         }
     }
 

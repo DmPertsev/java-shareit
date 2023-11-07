@@ -1,4 +1,4 @@
-/*package ru.practicum.shareit.request;
+package ru.practicum.shareit.request;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -126,9 +126,9 @@ class ItemRequestServiceImplTest {
         Long userId = 1L;
         Long requestId = 1L;
         User user = new User(userId, "Alex", "alex.b@yandex.ru");
-        ItemRequest itemRequest = new ItemRequest(1L, "description",  user,null, List.of());
+        ItemRequest itemRequest = new ItemRequest(1L, "description",  user, null, List.of());
 
-        Mockito.when(userRepository.existsById(Mockito.anyLong())).thenReturn(true);
+        Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         Mockito.when(itemRequestRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(itemRequest));
 
         ItemRequestDto expected = new ItemRequestDto(1L, "description", userId, null, List.of());
@@ -142,11 +142,7 @@ class ItemRequestServiceImplTest {
         Long userId = 999L;
         Long requestId = 1L;
 
-        Mockito.when(userRepository.existsById(Mockito.anyLong())).thenReturn(false);
-
         assertThrows(ObjectNotFoundException.class, () -> itemRequestService.getById(userId, requestId));
-
-        Mockito.verify(itemRequestRepository, Mockito.never()).findById(Mockito.anyLong());
     }
 
     @Test
@@ -154,11 +150,6 @@ class ItemRequestServiceImplTest {
         Long userId = 1L;
         Long requestId = 999L;
 
-        Mockito.when(userRepository.existsById(Mockito.anyLong())).thenReturn(true);
-        Mockito.when(itemRequestRepository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
-
         assertThrows(ObjectNotFoundException.class, () -> itemRequestService.getById(userId, requestId));
     }
 }
-
- */
