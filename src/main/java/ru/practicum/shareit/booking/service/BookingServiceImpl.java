@@ -54,7 +54,7 @@ public class BookingServiceImpl implements BookingService {
         userServiceImpl.throwIfNotExist(userId);
 
         try {
-            State bookingState = State.valueOf(state); // Parse the state value as an enum
+            State bookingState = State.valueOf(state);
             List<Booking> bookings;
             Pageable pageable = PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "start"));
 
