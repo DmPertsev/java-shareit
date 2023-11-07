@@ -55,7 +55,11 @@ public class UserServiceImpl implements UserService {
                 () -> new ObjectNotFoundException("Такого пользователя нет!"));
 
         if ((updateUserDto.getEmail() != null) && (!updateUserDto.getEmail().isBlank())) {
-            checkIfEmailExists(updateUserDto.getEmail());
+            userRepository.findByEmail(updateUserDto.getEmail()).ifPresent(user -> {
+                if (!user.getId().equals(userId)) {
+                    throw new DuplicatedEmailException(updateUserDto.getEmail());
+                }
+            });
             updateUser.setEmail(updateUserDto.getEmail());
         }
 
