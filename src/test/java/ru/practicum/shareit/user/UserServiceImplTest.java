@@ -27,6 +27,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.jayway.jsonpath.internal.path.PathCompiler.fail;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -126,13 +127,18 @@ class UserServiceImplTest {
 
         UpdateUserDto dto = new UpdateUserDto(userId, "Alex", newEmail);
 
-        User user = new User(userId, "Alex", newEmail);
+        User user = new User(userId, "Alex", "alex.b@yandex.ru");
 
         Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         Mockito.when(userRepository.findByEmail(newEmail)).thenReturn(Optional.of(user));
 
-        assertThatThrownBy(() -> userService.update(userId, dto))
-                .isInstanceOf(DuplicatedEmailException.class);
+        try {
+            userService.update(userId, dto);
+        } catch (DuplicatedEmailException e) {
+            return;
+        }
+
+        fail("Expected DuplicatedEmailException was not thrown.");
     }
 
     @Test
