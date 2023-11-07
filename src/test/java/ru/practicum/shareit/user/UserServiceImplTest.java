@@ -125,20 +125,13 @@ class UserServiceImplTest {
         Long userId = 1L;
         String newEmail = "newEmail@test.test";
 
-        UpdateUserDto dto = new UpdateUserDto(userId, "Alex", newEmail);
-
-        User user = new User(userId, "Alex", "alex.b@yandex.ru");
+        UpdateUserDto dto = new UpdateUserDto(1L, "Alex", newEmail);
+        User user = new User(1L, "Alex", "newEmail@test.test");
 
         Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         Mockito.when(userRepository.findByEmail(newEmail)).thenReturn(Optional.of(user));
 
-        try {
-            userService.update(userId, dto);
-        } catch (DuplicatedEmailException e) {
-            return;
-        }
-
-        fail("Expected DuplicatedEmailException was not thrown.");
+        assertThatThrownBy(() -> userService.update(userId, dto)).isInstanceOf(DuplicatedEmailException.class);
     }
 
     @Test
