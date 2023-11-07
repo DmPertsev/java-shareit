@@ -197,20 +197,6 @@ class BookingServiceImplTest {
 
             assertThrows(ValidationException.class, () -> bookingService.getAllByOwnerId(userId, state, 0, 10));
         }
-
-        /*
-        @Test
-        void getAllByOwnerId_shouldReturnUserNotFoundException() {
-            Long userId = 999L;
-            String state = String.valueOf(State.ALL);
-
-            // Убедитесь, что метод existsById вызывается с userId и возвращает false, чтобы генерировать исключение ObjectNotFoundException
-            Mockito.when(userRepository.existsById(userId)).thenReturn(false);
-
-            assertThrows(ObjectNotFoundException.class, () -> bookingService.getAllByOwnerId(userId, state, 0, 10));
-        }
-
-         */
     }
 
     @Nested
