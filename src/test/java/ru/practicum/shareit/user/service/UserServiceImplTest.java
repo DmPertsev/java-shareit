@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -6,11 +6,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
+import ru.practicum.shareit.exception.DuplicatedEmailException;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.dto.CreateUserDto;
@@ -19,7 +16,6 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
-import ru.practicum.shareit.user.service.UserServiceImpl;
 
 import java.util.List;
 import java.util.Optional;
@@ -119,15 +115,21 @@ class UserServiceImplTest {
     }
 
     @Test
-    void update_shouldThrowObjectNotFoundException() {
-        Long userId = 1L;
+    void update_shouldThrowDuplicateEmailException() {
+        Long id = 1L;
         String newEmail = "newEmail@test.test";
 
         UpdateUserDto dto = new UpdateUserDto(1L, "Alex", newEmail);
+        User user = new User(1L, "Alex", "oldEmail@test.test");
 
-        Mockito.when(userRepository.findById(userId)).thenReturn(Optional.empty());
+        // Возвращаем пользователя с известным идентификатором
+        Mockito.when(userRepository.findByEmail(newEmail)).thenReturn(Optional.of(new User(2L, "AnotherUser", newEmail)));
 
-        assertThatThrownBy(() -> userService.update(userId, dto)).isInstanceOf(ObjectNotFoundException.class);
+        Mockito.when(userRepository.findById(id)).thenReturn(Optional.of(user));
+
+        assertThatThrownBy(() -> userService.update(id, dto))
+                .isInstanceOf(DuplicatedEmailException.class)
+                .hasMessageContaining(newEmail);
     }
 
     @Test
