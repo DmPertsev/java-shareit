@@ -77,8 +77,6 @@ public class BookingServiceImpl implements BookingService {
                 case REJECTED:
                     bookings = bookingRepository.findAllByItemOwnerIdAndStatus(userId, Status.REJECTED, pageable);
                     break;
-                case UNSUPPORTED_STATUS:
-                    throw new ValidationException("Invalid state: " + state);
                 default:
                     throw new ValidationException("Unsupported state: " + state);
             }
