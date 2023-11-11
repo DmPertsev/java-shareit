@@ -28,8 +28,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.jayway.jsonpath.internal.path.PathCompiler.fail;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -39,6 +38,8 @@ import static org.mockito.Mockito.when;
 @DisplayName("JUnit 5 Nested")
 @ExtendWith(MockitoExtension.class)
 class BookingServiceImplTest {
+
+    private Long userId;
 
     @InjectMocks
     private BookingServiceImpl bookingService;
@@ -218,30 +219,13 @@ class BookingServiceImplTest {
                     .hasMessageContaining("Invalid state: " + state);
         }
 
-        /*@Test
-        void getAllByOwnerId_shouldReturnUserNotFoundException() {
-            Long userId = 999L;
-            String state = String.valueOf(State.ALL);
-
-            Mockito.lenient().when(userRepository.existsById(Mockito.anyLong())).thenReturn(false);
-
-            assertThatThrownBy(() -> bookingService.getAllByOwnerId(userId, state, 0, 10))
-                    .isInstanceOf(ObjectNotFoundException.class)
-                    .hasMessageContaining("User not found");
-        }
-
-         */
-
         @Test
-        void getAllByOwnerId_shouldThrowValidationExceptionForUnsupportedStatus() {
-            Long userId = 1L;
-            String state = "BLABLABLA";
+        void testGetOwnerBookingsByUnsupportedStatusState() {
+            String unsupportedState = "UNSUPPORTED_STATUS";
 
-            lenient().when(userRepository.existsById(Mockito.anyLong())).thenReturn(true);
-
-            assertThatThrownBy(() -> bookingService.getAllByOwnerId(userId, state, 0, 10))
+            assertThatThrownBy(() -> bookingService.getAllByOwnerId(userId, unsupportedState, 0, 10))
                     .isInstanceOf(ValidationException.class)
-                    .hasMessageContaining("Invalid state: " + state);
+                    .hasMessageContaining("Unsupported status: " + unsupportedState);
         }
     }
 

@@ -77,6 +77,8 @@ public class BookingServiceImpl implements BookingService {
                 case REJECTED:
                     bookings = bookingRepository.findAllByItemOwnerIdAndStatus(userId, Status.REJECTED, pageable);
                     break;
+                case UNSUPPORTED_STATUS:
+                    throw new ValidationException("Unsupported status: " + state);
                 default:
                     throw new ValidationException("Unsupported state: " + state);
             }
@@ -116,6 +118,8 @@ public class BookingServiceImpl implements BookingService {
                 case REJECTED:
                     bookings = bookingRepository.findAllByBookerIdAndStatus(userId, Status.REJECTED, pageable);
                     break;
+                case UNSUPPORTED_STATUS:
+                    throw new ValidationException("Unsupported status: " + state);
                 default:
                     throw new ValidationException("Unsupported state: " + state);
             }
@@ -125,6 +129,7 @@ public class BookingServiceImpl implements BookingService {
             throw new ValidationException("Invalid state: " + state + ". " + e.getMessage());
         }
     }
+
 
     @Transactional
     @Override
