@@ -77,6 +77,8 @@ public class BookingServiceImpl implements BookingService {
                 case REJECTED:
                     bookings = bookingRepository.findAllByItemOwnerIdAndStatus(userId, Status.REJECTED, pageable);
                     break;
+                case UNSUPPORTED_STATUS:
+                    throw new ValidationException("Invalid state: " + state);
                 default:
                     throw new ValidationException("Unsupported state: " + state);
             }
@@ -92,10 +94,11 @@ public class BookingServiceImpl implements BookingService {
         userServiceImpl.throwIfNotExist(userId);
 
         try {
-
             List<Booking> bookings;
             Pageable pageable = PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "start"));
-            switch (State.valueOf(state)) {
+            State bookingState = State.valueOf(state);
+
+            switch (bookingState) {
                 case ALL:
                     bookings = bookingRepository.findAllByBookerId(userId, pageable);
                     break;
@@ -116,11 +119,12 @@ public class BookingServiceImpl implements BookingService {
                     bookings = bookingRepository.findAllByBookerIdAndStatus(userId, Status.REJECTED, pageable);
                     break;
                 default:
-                    throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
+                    throw new ValidationException("Unsupported state: " + state);
             }
+
             return bookings.stream().map(BookingMapper::toDto).collect(Collectors.toList());
-        } catch (RuntimeException e) {
-            throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
+        } catch (IllegalArgumentException e) {
+            throw new ValidationException("Invalid state: " + state + ". " + e.getMessage());
         }
     }
 

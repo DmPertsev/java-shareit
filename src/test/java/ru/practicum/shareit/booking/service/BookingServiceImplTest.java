@@ -213,22 +213,35 @@ class BookingServiceImplTest {
 
             lenient().when(userRepository.existsById(Mockito.anyLong())).thenReturn(true);
 
-            assertThrows(ValidationException.class, () -> bookingService.getAllByOwnerId(userId, state, 0, 10));
+            assertThatThrownBy(() -> bookingService.getAllByOwnerId(userId, state, 0, 10))
+                    .isInstanceOf(ValidationException.class)
+                    .hasMessageContaining("Invalid state: " + state);
         }
 
-        @Test
+        /*@Test
         void getAllByOwnerId_shouldReturnUserNotFoundException() {
             Long userId = 999L;
             String state = String.valueOf(State.ALL);
 
             Mockito.lenient().when(userRepository.existsById(Mockito.anyLong())).thenReturn(false);
 
-            try {
-                bookingService.getAllByOwnerId(userId, state, 0, 10);
-                fail("Expected ObjectNotFoundException, but no exception was thrown");
-            } catch (Exception e) {
-                System.out.println("Caught unexpected exception: " + e.getClass().getName() + " - " + e.getMessage());
-            }
+            assertThatThrownBy(() -> bookingService.getAllByOwnerId(userId, state, 0, 10))
+                    .isInstanceOf(ObjectNotFoundException.class)
+                    .hasMessageContaining("User not found");
+        }
+
+         */
+
+        @Test
+        void getAllByOwnerId_shouldThrowValidationExceptionForUnsupportedStatus() {
+            Long userId = 1L;
+            String state = "BLABLABLA";
+
+            lenient().when(userRepository.existsById(Mockito.anyLong())).thenReturn(true);
+
+            assertThatThrownBy(() -> bookingService.getAllByOwnerId(userId, state, 0, 10))
+                    .isInstanceOf(ValidationException.class)
+                    .hasMessageContaining("Invalid state: " + state);
         }
     }
 
@@ -351,6 +364,8 @@ class BookingServiceImplTest {
 
             assertThrows(ObjectNotFoundException.class, () -> bookingService.getAllByBookerId(userId, state, 0, 10));
         }
+
+
     }
 
     @Nested

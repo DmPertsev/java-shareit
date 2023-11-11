@@ -16,7 +16,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     public ErrorResponse handleMethodArgumentNotValidException(final MethodArgumentNotValidException exception) {
-        log.error("Ошибка валидации! {}", exception.getMessage());
+        log.error("Validation error! {}", exception.getMessage());
         return new ErrorResponse(
                 exception.getMessage()
         );
@@ -24,7 +24,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     public ErrorResponse handleConstraintViolationException(final ConstraintViolationException exception) {
-        log.error("Ошибка валидации! {}", exception.getMessage());
+        log.error("Validation error! {}", exception.getMessage());
         return new ErrorResponse(
                 exception.getMessage()
         );
@@ -33,7 +33,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleObjectNotFoundException(final ObjectNotFoundException exception) {
-        log.error("Такого объекта нет! {}", exception.getMessage());
+        log.error("Object not found! {}", exception.getMessage());
         return new ErrorResponse(
                 exception.getMessage()
         );
@@ -42,7 +42,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse duplicatedExceptionHandler(DuplicatedEmailException exception) {
-        log.error("Такой email есть! {}", exception.getMessage());
+        log.error("Duplicate email! {}", exception.getMessage());
         return new ErrorResponse(
                 exception.getMessage()
         );
@@ -51,7 +51,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidException(final ValidationException exception) {
-        log.error("Ошибка валидации! {}", exception.getMessage());
+        log.error("Validation error! {}", exception.getMessage());
         return new ErrorResponse(
                 exception.getMessage()
         );
@@ -59,17 +59,24 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse unavailableExceptionResponse(final UnavailableException exception) {
-        log.error("Ошибка доступности вещи! {}", exception.getMessage());
+    public ErrorResponse handleUnavailableException(final UnavailableException exception) {
+        log.error("Item is not available! {}", exception.getMessage());
         return new ErrorResponse(
                 exception.getMessage()
         );
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleIllegalArgumentException(final IllegalArgumentException exception) {
+        log.error("Invalid argument! {}", exception.getMessage());
+        return new ErrorResponse("Unknown state: " + exception.getMessage());
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleServerError(final Exception exception) {
-        log.error("Ошибка сервера! {}", exception.getMessage());
+        log.error("Server error! {}", exception.getMessage());
         return new ErrorResponse(
                 exception.getMessage()
         );
