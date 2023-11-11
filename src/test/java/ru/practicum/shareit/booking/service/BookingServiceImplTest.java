@@ -478,4 +478,63 @@ class BookingServiceImplTest {
             assertThrows(ValidationException.class, () -> bookingService.update(userId, bookingId, approved));
         }
     }
+
+    @Test
+    void create_shouldReturnValidationExceptionIfItemNotAvailable() {
+        Long userId = 2L;
+        Long itemId = 1L;
+        item.setAvailable(false);
+
+        when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
+        when(userRepository.findById(any())).thenReturn(Optional.of(user2));
+
+        CreateBookingDto dto = new CreateBookingDto(start, end, itemId);
+
+        assertThrows(ValidationException.class, () -> bookingService.create(dto, userId, itemId));
+
+        Mockito.verify(bookingRepository, Mockito.never()).save(any());
+    }
+
+    @Test
+    void create_shouldSaveBookingSuccessfully() {
+        CreateBookingDto dto = new CreateBookingDto(start, end, item.getId());
+
+        when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
+        when(userRepository.findById(user2.getId())).thenReturn(Optional.of(user2));
+        when(bookingRepository.save(any())).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
+
+        BookingDto bookingdto = bookingService.create(dto, user2.getId(), item.getId());
+
+        assertThat(bookingdto).hasFieldOrProperty("id");
+        assertEquals(Status.WAITING, bookingdto.getStatus());
+    }
+
+    @Test
+    void create_shouldReturnUserNotFoundExceptionIfUserNotExists() {
+        Long userId = 999L;
+        Long itemId = 1L;
+
+        when(userRepository.findById(any())).thenReturn(Optional.empty());
+
+        CreateBookingDto dto = new CreateBookingDto(start, end, itemId);
+
+        assertThrows(ObjectNotFoundException.class, () -> bookingService.create(dto, userId, itemId));
+
+        Mockito.verify(bookingRepository, Mockito.never()).save(any());
+    }
+
+    @Test
+    void create_shouldReturnItemNotFoundExceptionIfItemNotExists() {
+        Long userId = 2L;
+        Long itemId = 999L;
+
+        when(itemRepository.findById(itemId)).thenReturn(Optional.empty());
+        when(userRepository.findById(any())).thenReturn(Optional.of(user2));
+
+        CreateBookingDto dto = new CreateBookingDto(start, end, itemId);
+
+        assertThrows(ObjectNotFoundException.class, () -> bookingService.create(dto, userId, itemId));
+
+        Mockito.verify(bookingRepository, Mockito.never()).save(any());
+    }
 }

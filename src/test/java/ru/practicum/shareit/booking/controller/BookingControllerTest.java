@@ -9,6 +9,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.practicum.shareit.Variables;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.CreateBookingDto;
@@ -217,5 +219,23 @@ class BookingControllerTest {
                 .getContentAsString();
 
         assertEquals(objectMapper.writeValueAsString(bookingDto), result);
+    }
+
+    @Test
+    void create_whenServiceThrowsException_shouldReturnInternalServerError() throws Exception {
+        Long userId = 1L;
+        Long itemId = 1L;
+        CreateBookingDto createBookingDto = new CreateBookingDto(
+                LocalDateTime.now().plusDays(1),
+                LocalDateTime.now().plusDays(3),
+                itemId);
+
+        Mockito.when(bookingService.create(Mockito.any(), Mockito.anyLong(), Mockito.anyLong()))
+                .thenThrow(new RuntimeException("Test exception"));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/bookings")
+                        .header(Variables.HEADER, userId)
+                        .content(objectMapper.writeValueAsString(createBookingDto)))
+                .andExpect(MockMvcResultMatchers.status().isInternalServerError());
     }
 }

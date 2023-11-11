@@ -140,4 +140,26 @@ class UserServiceImplTest {
 
         Mockito.verify(userRepository, Mockito.times(1)).deleteById(4L);
     }
+
+    @Test
+    void update_shouldReturnUnchangedUserDto() {
+        Long userId = 1L;
+        UpdateUserDto dto = new UpdateUserDto(null, null, null);
+
+        User user = new User(userId, "John", "john.d@yandex.ru");
+        Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+        UserDto expected = UserMapper.toDto(user);
+        UserDto actual = userService.update(userId, dto);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void deleteById_shouldCallDeleteByIdWithExpectedId() {
+        Long userId = 1L;
+        userService.deleteById(userId);
+
+        Mockito.verify(userRepository, Mockito.times(1)).deleteById(userId);
+    }
 }

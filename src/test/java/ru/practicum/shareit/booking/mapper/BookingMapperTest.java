@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoShort;
 import ru.practicum.shareit.booking.dto.BookingDtoShortResponse;
-import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.dto.CreateBookingDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Status;
@@ -15,6 +14,7 @@ import ru.practicum.shareit.user.model.User;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class BookingMapperTest {
     private Item item;
@@ -76,5 +76,15 @@ class BookingMapperTest {
         assertThat(dto.getEnd()).isEqualTo(booking.getEnd());
         assertThat(dto.getItemId()).isEqualTo(item.getId());
         assertThat(dto.getBookerId()).isEqualTo(user.getId());
+    }
+
+    @Test
+    void toBookingFromCreateBookingDto_shouldMapNullStartAndEnd() {
+        CreateBookingDto createBookingDto = new CreateBookingDto(null, null, item.getId());
+
+        Booking booking = BookingMapper.toBooking(createBookingDto);
+
+        assertNull(booking.getStart());
+        assertNull(booking.getEnd());
     }
 }

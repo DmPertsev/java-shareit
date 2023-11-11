@@ -70,9 +70,11 @@ class UserServiceImplIntegrationTest {
 
     @Test
     void delete() {
-        userService.deleteById(userId);
-        List<UserDto> actualDtoList = userService.getAll(0, 10);
+        assertEquals(1, userService.getAll(0, 10).size());
 
+        userService.deleteById(userId);
+
+        List<UserDto> actualDtoList = userService.getAll(0, 10);
         assertEquals(List.of(), actualDtoList);
     }
 }
