@@ -31,6 +31,7 @@ public class CommentDtoResponse {
     @Data
     public static class ItemComment {
         private final Long id;
+
         private final String name;
     }
 }

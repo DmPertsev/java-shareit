@@ -13,7 +13,6 @@ import javax.validation.ConstraintViolationException;
 @RestControllerAdvice
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class ErrorHandler {
-
     @ExceptionHandler
     public ErrorResponse handleMethodArgumentNotValidException(final MethodArgumentNotValidException exception) {
         log.error("Ошибка валидации! {}", exception.getMessage());

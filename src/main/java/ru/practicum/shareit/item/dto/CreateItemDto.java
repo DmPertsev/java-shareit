@@ -16,7 +16,6 @@ import javax.validation.constraints.Positive;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class CreateItemDto {
-
     private Long id;
 
     @NotBlank

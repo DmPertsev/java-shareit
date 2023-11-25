@@ -12,7 +12,6 @@ import javax.validation.constraints.Email;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class UpdateUserDto {
-
     private Long id;
 
     private String name;
