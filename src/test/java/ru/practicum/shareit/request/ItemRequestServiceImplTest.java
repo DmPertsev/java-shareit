@@ -9,8 +9,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoShort;
-import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
+import ru.practicum.shareit.request.service.ItemRequestServiceImpl;
+import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;

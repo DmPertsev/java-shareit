@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -8,10 +8,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.DuplicatedEmailException;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
+import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.dto.CreateUserDto;
 import ru.practicum.shareit.user.dto.UpdateUserDto;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.dto.UserMapper;
+import ru.practicum.shareit.user.mapper.UserMapper;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,7 +52,9 @@ public class UserServiceImpl implements UserService {
                 () -> new ObjectNotFoundException("Такого пользователя нет!"));
 
         if ((updateUserDto.getEmail() != null) && (!updateUserDto.getEmail().isBlank())) {
-            checkIfEmailExists(updateUserDto.getEmail());
+            if (!updateUser.getEmail().equals(updateUserDto.getEmail())) {
+                checkIfEmailExists(updateUserDto.getEmail());
+            }
             updateUser.setEmail(updateUserDto.getEmail());
         }
 
@@ -60,6 +64,7 @@ public class UserServiceImpl implements UserService {
 
         return UserMapper.toDto(updateUser);
     }
+
 
     @Transactional
     @Override

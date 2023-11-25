@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -6,13 +6,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.booking.BookingRepository;
+import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingDtoShortResponse;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
+import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.comment.CommentDtoResponse;
 import ru.practicum.shareit.item.comment.CreateCommentDto;
-import ru.practicum.shareit.booking.dto.BookingMapper;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.exception.UnavailableException;
 import ru.practicum.shareit.item.comment.Comment;
@@ -23,11 +24,12 @@ import ru.practicum.shareit.item.dto.CreateItemDto;
 
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoResponse;
-import ru.practicum.shareit.item.dto.ItemMapper;
+import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.dto.UpdateItemDto;
-import ru.practicum.shareit.request.ItemRequestRepository;
-import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
+import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.Collections;

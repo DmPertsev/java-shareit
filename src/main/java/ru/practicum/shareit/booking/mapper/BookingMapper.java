@@ -1,7 +1,11 @@
-package ru.practicum.shareit.booking.dto;
+package ru.practicum.shareit.booking.mapper;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingDtoShort;
+import ru.practicum.shareit.booking.dto.BookingDtoShortResponse;
+import ru.practicum.shareit.booking.dto.CreateBookingDto;
 import ru.practicum.shareit.booking.model.Booking;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

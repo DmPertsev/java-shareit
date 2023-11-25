@@ -1,8 +1,12 @@
-package ru.practicum.shareit.item.dto;
+package ru.practicum.shareit.item.mapper;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.item.Item;
+import ru.practicum.shareit.item.dto.CreateItemDto;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDtoResponse;
+import ru.practicum.shareit.item.dto.UpdateItemDto;
+import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
 import java.util.stream.Collectors;
