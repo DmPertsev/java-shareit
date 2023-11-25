@@ -61,15 +61,13 @@ class BookingServiceImplTest {
     }
 
     @Nested
-    @DisplayName("Tests for the method getById")
+    @DisplayName("test for method getById")
     class GetById {
         @Test
         void getById_shouldReturnBookingDto() {
-            Long bookingId = 1L;
-            Long userId = 1L;
             Mockito.when(bookingRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(booking));
 
-            BookingDto result = bookingService.getById(bookingId, userId);
+            BookingDto result = bookingService.getById(1L, 1L);
 
             assertEquals(1L, result.getId());
             assertEquals(start, result.getStart());
@@ -83,22 +81,16 @@ class BookingServiceImplTest {
 
         @Test
         void getById_shouldReturnUserNotFoundException() {
-            Long bookingId = 1L;
-            Long userId = 999L;
-
             Mockito.when(bookingRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(booking));
 
-            assertThrows(ObjectNotFoundException.class, () -> bookingService.getById(bookingId, userId));
+            assertThrows(ObjectNotFoundException.class, () -> bookingService.getById(1L, 999L));
         }
 
         @Test
         void getById_shouldReturnBookingNotFoundException() {
-            Long bookingId = 999L;
-            Long userId = 1L;
-
             Mockito.when(bookingRepository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
 
-            assertThrows(ObjectNotFoundException.class, () -> bookingService.getById(bookingId, userId));
+            assertThrows(ObjectNotFoundException.class, () -> bookingService.getById(999L, 1L));
         }
     }
 
