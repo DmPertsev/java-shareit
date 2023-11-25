@@ -18,6 +18,7 @@ import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.user.service.UserServiceImpl;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,6 +31,8 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
+    private final UserServiceImpl userServiceImpl;
+
 
     @Transactional(readOnly = true)
     @Override
@@ -48,9 +51,7 @@ public class BookingServiceImpl implements BookingService {
     @Transactional(readOnly = true)
     @Override
     public List<BookingDto> getAllByOwnerId(Long userId, String state, Integer from, Integer size) {
-        if (!userRepository.existsById(userId)) {
-            throw new ObjectNotFoundException("Пользователя нет: " + userId);
-        }
+        userServiceImpl.throwIfNotExist(userId);
 
         try {
             List<Booking> bookings;
@@ -89,10 +90,7 @@ public class BookingServiceImpl implements BookingService {
     @Transactional(readOnly = true)
     @Override
     public List<BookingDto> getAllByBookerId(Long userId, String state, Integer from, Integer size) {
-
-        if (!userRepository.existsById(userId)) {
-            throw new ObjectNotFoundException("Пользователя нет: " + userId);
-        }
+        userServiceImpl.throwIfNotExist(userId);
 
         try {
 
@@ -180,4 +178,6 @@ public class BookingServiceImpl implements BookingService {
 
         booking.setItem(item);
     }
+
+
 }

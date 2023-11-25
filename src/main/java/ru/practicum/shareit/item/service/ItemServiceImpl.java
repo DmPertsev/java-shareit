@@ -91,8 +91,10 @@ public class ItemServiceImpl implements ItemService {
             return Collections.emptyList();
         }
 
-        return itemRepository.search(text.toLowerCase(), pageable).stream()
-                .map(ItemMapper::toDto).collect(Collectors.toList());
+        return itemRepository.search(text.toLowerCase(), pageable)
+                .stream()
+                .map(ItemMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)

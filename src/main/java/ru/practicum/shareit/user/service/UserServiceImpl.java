@@ -79,4 +79,10 @@ public class UserServiceImpl implements UserService {
             throw new DuplicatedEmailException(email);
         });
     }
+
+    public void throwIfNotExist(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new ObjectNotFoundException("Пользователя нет: " + userId);
+        }
+    }
 }
