@@ -27,7 +27,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.jayway.jsonpath.internal.path.PathCompiler.fail;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -121,7 +120,7 @@ class UserServiceImplTest {
         assertEquals(expected, actual);
     }
 
-    /*@Test
+    @Test
     void update_shouldThrowDuplicateEmailException() {
         Long id = 1L;
         String newEmail = "newEmail@test.test";
@@ -136,8 +135,6 @@ class UserServiceImplTest {
                 .isInstanceOf(DuplicatedEmailException.class)
                 .hasMessageContaining("Email " + newEmail + " is already in use");
     }
-
-     */
 
     @Test
     void delete() {
