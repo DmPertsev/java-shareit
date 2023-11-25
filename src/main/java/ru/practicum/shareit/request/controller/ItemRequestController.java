@@ -37,6 +37,7 @@ public class ItemRequestController {
     public ItemRequestDto getById(@RequestHeader(name = Variables.HEADER) Long userId,
                                   @PathVariable Long requestId) {
         log.info("Получен запрос GET /requests/{}.", requestId);
+
         return itemRequestService.getById(userId, requestId);
     }
 
@@ -45,6 +46,7 @@ public class ItemRequestController {
                                        @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
                                        @Positive @RequestParam(defaultValue = "10") Integer size) {
         log.info("Получен запрос GET /requests/all?from={}&size={}", from, size);
+
         return itemRequestService.getAll(userId, from, size);
     }
 
@@ -53,6 +55,7 @@ public class ItemRequestController {
                                                   @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
                                                   @Positive @RequestParam(defaultValue = "10") Integer size) {
         log.info("Получен запрос GET /requests");
+
         return itemRequestService.getAllByRequester(userId, from, size);
     }
 
@@ -60,6 +63,7 @@ public class ItemRequestController {
     public ItemRequestDtoShort create(@RequestHeader(name = Variables.HEADER) Long userId,
                                       @Valid @RequestBody ItemRequestDtoShort itemRequestDto) {
         log.info("Получен запрос POST /requests.");
+
         return itemRequestService.create(userId, itemRequestDto);
     }
 }

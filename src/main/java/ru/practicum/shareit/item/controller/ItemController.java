@@ -34,12 +34,14 @@ import java.util.List;
 @Validated
 @RequestMapping("/items")
 public class ItemController {
+
     private final ItemService itemService;
 
     @GetMapping("/{itemId}")
     public ItemDto getById(@PathVariable Long itemId,
                            @RequestHeader(name = Variables.HEADER, required = false) Long userId) {
         log.info("Получен запрос GET /items/{}.", itemId);
+
         return itemService.getById(itemId, userId);
     }
 
@@ -48,6 +50,7 @@ public class ItemController {
                                 @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
                                 @Positive @RequestParam(defaultValue = "10") Integer size) {
         log.info("Получен запрос GET /items/search?from={}&size={}.", from, size);
+
         return itemService.search(text, from, size);
     }
 
@@ -56,6 +59,7 @@ public class ItemController {
                                              @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
                                              @Positive @RequestParam(defaultValue = "10") Integer size) {
         log.info("Получен запрос GET /items?from={}&size={}.", from, size);
+
         return itemService.getByUserId(userId, from, size);
     }
 
@@ -63,6 +67,7 @@ public class ItemController {
     public ItemDto create(@RequestHeader(name = Variables.HEADER) Long userId,
                           @Valid @RequestBody CreateItemDto itemDto) {
         log.info("Получен запрос POST /items.");
+
         return itemService.create(userId, itemDto);
     }
 
@@ -71,6 +76,7 @@ public class ItemController {
                                     @RequestHeader(name = Variables.HEADER) Long userId,
                                     @Valid @RequestBody CreateCommentDto commentDto) {
         log.info("Получен запрос POST /items/{id}/comment.");
+
         return itemService.createComment(id, userId, commentDto);
     }
 
@@ -79,12 +85,14 @@ public class ItemController {
                           @RequestHeader(name = Variables.HEADER) Long userId,
                           @Valid @RequestBody UpdateItemDto itemDto) {
         log.debug("Получен запрос PATCH /items/{}.", itemId);
+
         return itemService.update(itemId, userId, itemDto);
     }
 
     @DeleteMapping("/{id}")
     public ItemDto delete(@PathVariable Long id) {
         log.debug("Получен запрос DELETE /items/{}.", id);
+
         return itemService.delete(id);
     }
 }

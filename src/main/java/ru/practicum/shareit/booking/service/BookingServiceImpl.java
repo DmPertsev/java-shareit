@@ -49,7 +49,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingDto> getAllByOwnerId(Long userId, String state, Integer from, Integer size) {
         if (!userRepository.existsById(userId)) {
-            throw new ObjectNotFoundException("Такого пользователя нет");
+            throw new ObjectNotFoundException("Пользователя нет: " + userId);
         }
 
         try {
@@ -89,8 +89,9 @@ public class BookingServiceImpl implements BookingService {
     @Transactional(readOnly = true)
     @Override
     public List<BookingDto> getAllByBookerId(Long userId, String state, Integer from, Integer size) {
+
         if (!userRepository.existsById(userId)) {
-            throw new ObjectNotFoundException("Такого пользователя нет!");
+            throw new ObjectNotFoundException("Пользователя нет: " + userId);
         }
 
         try {
@@ -140,7 +141,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingDto update(Long userId, Long bookingId, boolean approved) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(
-                () -> new ObjectNotFoundException("Такого бронирования нет!"));
+                () -> new ObjectNotFoundException("Бронирования нет: " + bookingId));
 
         if (booking.getItem().getOwner().getId().equals(userId)) {
             Status status = booking.getStatus();
@@ -164,10 +165,10 @@ public class BookingServiceImpl implements BookingService {
 
     private void setUserAndItemForBooking(Booking booking, Long userId, Long itemId) {
         booking.setBooker(userRepository.findById(userId).orElseThrow(
-                () -> new ObjectNotFoundException("Такого пользователя нет!")));
+                () -> new ObjectNotFoundException("Пользователя нет: " + userId)));
 
         Item item = itemRepository.findById(itemId).orElseThrow(
-                () -> new ObjectNotFoundException("Такой вещи нет!"));
+                () -> new ObjectNotFoundException("Вещи нет: " + itemId));
 
         if (!item.getAvailable()) {
             throw new ValidationException("Вещь недоступна");

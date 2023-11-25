@@ -20,6 +20,7 @@ public class CheckDateValidator implements ConstraintValidator<StartBeforeEndDat
                 || (start == end)) {
             return false;
         }
+
         return start.isBefore(end);
     }
 }

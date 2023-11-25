@@ -20,18 +20,19 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ItemRequestServiceImpl implements ItemRequestService {
-    private final UserRepository userRepository;
 
+    private final UserRepository userRepository;
     private final ItemRequestRepository itemRequestRepository;
 
     @Transactional(readOnly = true)
     @Override
     public ItemRequestDto getById(Long userId, Long requestId) {
         if (!userRepository.existsById(userId)) {
-            throw new ObjectNotFoundException("Такого пользователя нет!");
+            throw new ObjectNotFoundException("Пользователя нет: " + userId);
         }
+
         return ItemRequestMapper.toDto(itemRequestRepository.findById(requestId).orElseThrow(() ->
-                new ObjectNotFoundException("Такого запроса нет")));
+                new ObjectNotFoundException("Запроса нет: " + requestId)));
     }
 
     @Transactional
@@ -40,7 +41,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         ItemRequest itemRequest = ItemRequestMapper.toItemRequest(itemRequestDtoShort);
 
         itemRequest.setRequester(userRepository.findById(userId).orElseThrow(
-                () -> new ObjectNotFoundException("Такого пользователя нет!")));
+                () -> new ObjectNotFoundException("Пользователя нет: " + userId)));
 
         itemRequest.setCreated(LocalDateTime.now());
 
@@ -53,10 +54,11 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public List<ItemRequestDto> getAll(Long userId, Integer from, Integer size) {
         if (!userRepository.existsById(userId)) {
-            throw new ObjectNotFoundException("Такого пользователя нет!");
+            throw new ObjectNotFoundException("Пользователя нет: " + userId);
         }
         Pageable pageable = PageRequest.of(from / size, size,
                 Sort.by(Sort.Direction.DESC, "created"));
+
         return ItemRequestMapper.toDtoList(itemRequestRepository.findAllByUserId(userId, pageable));
     }
 
@@ -64,10 +66,11 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public List<ItemRequestDto> getAllByRequester(Long userId, Integer from, Integer size) {
         if (!userRepository.existsById(userId)) {
-            throw new ObjectNotFoundException("Такого пользователя нет!");
+            throw new ObjectNotFoundException("Пользователя нет: " + userId);
         }
         Pageable pageable = PageRequest.of(from / size, size,
                 Sort.by(Sort.Direction.DESC, "created"));
+
         return ItemRequestMapper.toDtoList(itemRequestRepository.findAllByRequesterId(userId, pageable));
     }
 }

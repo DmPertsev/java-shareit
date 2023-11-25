@@ -28,6 +28,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> getAll(Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from / size, size, Sort.by(Sort.Direction.ASC, "id"));
+
         return userRepository.findAll(pageable).stream().map(UserMapper::toDto).collect(Collectors.toList());
     }
 
@@ -35,13 +36,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getById(Long userId) {
         return UserMapper.toDto(userRepository.findById(userId).orElseThrow(
-                () -> new ObjectNotFoundException("Такого пользователя нет!")));
+                () -> new ObjectNotFoundException("Пользователя нет: " + userId)));
     }
 
     @Transactional
     @Override
     public UserDto create(CreateUserDto createUserDto) {
         User newUser = UserMapper.createUserDtoToUser(createUserDto);
+
         return UserMapper.toDto(userRepository.save(newUser));
     }
 
@@ -49,7 +51,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto update(Long userId, UpdateUserDto updateUserDto) {
         User updateUser = userRepository.findById(userId).orElseThrow(
-                () -> new ObjectNotFoundException("Такого пользователя нет!"));
+                () -> new ObjectNotFoundException("Пользователя нет: " + userId));
 
         if ((updateUserDto.getEmail() != null) && (!updateUserDto.getEmail().isBlank())) {
             if (!updateUser.getEmail().equals(updateUserDto.getEmail())) {

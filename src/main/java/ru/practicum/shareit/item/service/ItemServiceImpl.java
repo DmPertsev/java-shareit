@@ -41,12 +41,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class ItemServiceImpl implements ItemService {
+
     private final ItemRepository itemRepository;
-
     private final UserRepository userRepository;
-
     private final BookingRepository bookingRepository;
-
     private final CommentRepository commentRepository;
     private final ItemRequestRepository itemRequestRepository;
 
@@ -55,7 +53,7 @@ public class ItemServiceImpl implements ItemService {
         Pageable pageable = PageRequest.of(from / size, size, Sort.by(Sort.Direction.ASC, "id"));
 
         List<ItemDtoResponse> itemsDtoResponse = itemRepository.findAllByOwner(userRepository.findById(userId)
-                        .orElseThrow(() -> new ObjectNotFoundException("Такого пользователя нет!")), pageable)
+                        .orElseThrow(() -> new ObjectNotFoundException("Пользователя нет: " + userId)), pageable)
                 .stream().map(ItemMapper::toDtoResponse)
                 .collect(Collectors.toList());
 
@@ -92,6 +90,7 @@ public class ItemServiceImpl implements ItemService {
         if (text.isBlank()) {
             return Collections.emptyList();
         }
+
         return itemRepository.search(text.toLowerCase(), pageable).stream()
                 .map(ItemMapper::toDto).collect(Collectors.toList());
     }
@@ -100,7 +99,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto getById(Long itemId, Long userId) {
         Item item = itemRepository.findById(itemId).orElseThrow(
-                () -> new ObjectNotFoundException("Такой вещи нет!"));
+                () -> new ObjectNotFoundException("Вещи нет: " + itemId));
 
         if (item.getOwner().getId().equals(userId)) {
             List<Booking> bookings = bookingRepository.findAllByItemIdAndStatus(itemId, Status.APPROVED,
@@ -119,16 +118,16 @@ public class ItemServiceImpl implements ItemService {
         Item item = ItemMapper.createItemDtoToItem(itemDto);
 
         item.setOwner(userRepository.findById(userId).orElseThrow(
-                () -> new ObjectNotFoundException("Такого пользователя нет!")));
+                () -> new ObjectNotFoundException("Пользователя нет: " + userId)));
 
         Long requestId = itemDto.getRequestId();
 
         if (requestId != null) {
             item.setItemRequest(itemRequestRepository.findById(requestId)
-                    .orElseThrow(() -> new ObjectNotFoundException("Такого запроса нет")));
+                    .orElseThrow(() -> new ObjectNotFoundException("Запроса нет: " + requestId)));
         }
-
         itemRepository.save(item);
+
         return ItemMapper.toDto(item);
     }
 
@@ -136,10 +135,10 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto update(Long itemId, Long userId, UpdateItemDto itemDto) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new ObjectNotFoundException("Такого пользователя нет!"));
+                () -> new ObjectNotFoundException("Пользователя нет: " + userId));
 
         Item item = itemRepository.findById(itemId).orElseThrow(
-                () -> new ObjectNotFoundException("Такой вещи нет!"));
+                () -> new ObjectNotFoundException("Вещи нет: " + itemId));
 
         if (!user.equals(item.getOwner())) {
             throw new ObjectNotFoundException("Пользователь не является владельцем вещи!");
@@ -164,8 +163,9 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto delete(Long itemId) {
         Item item = itemRepository.findById(itemId).orElseThrow(
-                () -> new ObjectNotFoundException("Такой вещи нет!"));
+                () -> new ObjectNotFoundException("Вещи нет: " + itemId));
         itemRepository.deleteById(itemId);
+
         return ItemMapper.toDto(item);
     }
 
@@ -173,9 +173,9 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public CommentDto createComment(Long itemId, Long userId, CreateCommentDto commentDto) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new ObjectNotFoundException("Такого пользователя нет"));
+                () -> new ObjectNotFoundException("Пользователя нет: " + userId));
         Item item = itemRepository.findById(itemId).orElseThrow(
-                () -> new ObjectNotFoundException("Такой вещи нет"));
+                () -> new ObjectNotFoundException("Вещи нет: " + itemId));
 
         if (!bookingRepository.findAllByItemIdAndBookerIdAndEndBefore(itemId, userId, LocalDateTime.now())
                 .isEmpty()) {

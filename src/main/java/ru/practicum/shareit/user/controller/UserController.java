@@ -28,24 +28,28 @@ import java.util.List;
 @Validated
 @RequestMapping(path = "/users")
 public class UserController {
+
     private final UserService userService;
 
     @GetMapping()
     public List<UserDto> getAll(@PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
                                 @Positive @RequestParam(defaultValue = "10") Integer size) {
         log.info("Получен запрос GET /users.");
+
         return userService.getAll(from, size);
     }
 
     @GetMapping("/{id}")
     public UserDto getById(@PathVariable("id") Long userId) {
         log.info("Получен запрос GET /users/{}.", userId);
+
         return userService.getById(userId);
     }
 
     @PostMapping()
     public UserDto create(@Valid @RequestBody CreateUserDto createUserDto) {
         log.info("Получен запрос POST /users.");
+
         return userService.create(createUserDto);
     }
 
@@ -53,6 +57,7 @@ public class UserController {
     public UserDto update(@PathVariable("id") Long userId,
                           @Valid @RequestBody UpdateUserDto updateUserDto) {
         log.info("Получен запрос PATCH /users/{}.", userId);
+
         return userService.update(userId, updateUserDto);
     }
 

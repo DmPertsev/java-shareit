@@ -35,6 +35,7 @@ public class BookingController {
     public BookingDto getById(@PathVariable Long bookingId,
                               @RequestHeader(name = Variables.HEADER) Long bookerId) {
         log.info("Получен запрос GET /bookings/{}.", bookingId);
+
         return bookingService.getById(bookingId, bookerId);
     }
 
@@ -44,6 +45,7 @@ public class BookingController {
                                           @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
                                           @Positive @RequestParam(defaultValue = "10") Integer size) {
         log.info("Получен запрос GET /bookings/owner?state={}&from={}&size={}.", state, from, size);
+
         return bookingService.getAllByOwnerId(ownerId, state, from, size);
     }
 
@@ -53,6 +55,7 @@ public class BookingController {
                                            @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
                                            @Positive @RequestParam(defaultValue = "10") Integer size) {
         log.info("Получен запрос GET /bookings?state={}&from={}&size={}.", state, from, size);
+
         return bookingService.getAllByBookerId(bookerId, state, from, size);
     }
 
@@ -60,6 +63,7 @@ public class BookingController {
     public BookingDto create(@RequestHeader(name = Variables.HEADER) Long userId,
                              @Valid @RequestBody CreateBookingDto createBookingDto) {
         log.info("Получен запрос POST /bookings");
+
         return bookingService.create(createBookingDto, userId, createBookingDto.getItemId());
     }
 
@@ -68,6 +72,7 @@ public class BookingController {
                              @PathVariable Long bookingId,
                              @RequestParam boolean approved) {
         log.info("Получен запрос PATCH /bookings/{}.", bookingId);
+
         return bookingService.update(userId, bookingId, approved);
     }
 }
