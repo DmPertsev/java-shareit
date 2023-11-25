@@ -426,6 +426,7 @@ class BookingServiceImplTest {
             booking.setStatus(Status.WAITING);
 
             Mockito.when(bookingRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(booking));
+            Mockito.when(userRepository.existsById(Mockito.anyLong())).thenReturn(false);
 
             assertThrows(ObjectNotFoundException.class, () -> bookingService.update(userId, bookingId, approved));
         }
@@ -435,7 +436,7 @@ class BookingServiceImplTest {
             Long userId = 1L;
             Long bookingId = 1L;
             boolean approved = true;
-            booking.setStatus(Status.CANCELED);
+            booking.setStatus(Status.REJECTED);
 
             Mockito.when(bookingRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(booking));
 
