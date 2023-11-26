@@ -1,8 +1,8 @@
 package ru.practicum.shareit.user.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
@@ -10,9 +10,8 @@ import javax.validation.constraints.Email;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@EqualsAndHashCode
 public class UpdateUserDto {
-
     private Long id;
 
     private String name;

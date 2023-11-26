@@ -12,9 +12,9 @@ import java.util.List;
 
 public interface ItemService {
 
-    List<ItemDtoResponse> getByUserId(Long userId);
+    List<ItemDtoResponse> getByUserId(Long userId, Integer from, Integer size);
 
-    List<ItemDto> search(String text);
+    List<ItemDto> search(String text, Integer from, Integer size);
 
     ItemDto getById(Long itemId, Long userId);
 

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.practicum.shareit.item.comment.CommentDto;
 import ru.practicum.shareit.booking.dto.BookingDtoShort;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.Column;
@@ -53,4 +54,8 @@ public class Item {
 
     @Transient
     private List<CommentDto> comments;
+
+    @ManyToOne
+    @JoinColumn(name = "request_id")
+    private ItemRequest itemRequest;
 }

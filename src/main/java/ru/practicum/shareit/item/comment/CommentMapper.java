@@ -31,4 +31,13 @@ public class CommentMapper {
                 .created(comment.getCreated())
                 .build();
     }
+
+    public static CommentDtoResponse toDtoResponseFromCommentDto(CommentDto commentDto) {
+        return CommentDtoResponse.builder()
+                .id(commentDto.getId())
+                .text(commentDto.getText())
+                .authorName(commentDto.getAuthorName())
+                .created(commentDto.getCreated())
+                .build();
+    }
 }

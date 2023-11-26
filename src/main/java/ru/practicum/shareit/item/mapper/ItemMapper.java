@@ -5,7 +5,11 @@ import lombok.NoArgsConstructor;
 import ru.practicum.shareit.item.dto.CreateItemDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoResponse;
+import ru.practicum.shareit.item.dto.UpdateItemDto;
 import ru.practicum.shareit.item.model.Item;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ItemMapper {
@@ -18,21 +22,22 @@ public class ItemMapper {
                 null,
                 null,
                 null,
+                null,
                 null
         );
-
     }
 
     public static ItemDto toDto(Item item) {
-        return new ItemDto(
-                item.getId(),
-                item.getName(),
-                item.getDescription(),
-                item.getAvailable(),
-                item.getLastBooking(),
-                item.getNextBooking(),
-                item.getComments()
-        );
+        return ItemDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
+                .lastBooking(item.getLastBooking())
+                .nextBooking(item.getNextBooking())
+                .comments(item.getComments())
+                .requestId((item.getItemRequest() == null ? null : item.getItemRequest().getId()))
+                .build();
     }
 
     public static ItemDtoResponse toDtoResponse(Item item) {
@@ -42,5 +47,19 @@ public class ItemMapper {
                 .description(item.getDescription())
                 .available(item.getAvailable())
                 .build();
+    }
+
+    public static UpdateItemDto toUpdateDto(Item item) {
+        return UpdateItemDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
+                .requestId((item.getItemRequest() == null ? null : item.getItemRequest().getId()))
+                .build();
+    }
+
+    public static List<UpdateItemDto> toDtoShortList(List<Item> items) {
+        return items.stream().map(ItemMapper::toUpdateDto).collect(Collectors.toList());
     }
 }

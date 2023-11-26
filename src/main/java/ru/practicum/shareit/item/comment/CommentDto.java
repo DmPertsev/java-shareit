@@ -3,14 +3,14 @@ package ru.practicum.shareit.item.comment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @Builder
+@EqualsAndHashCode
 public class CommentDto {
 
     private Long id;

@@ -1,0 +1,25 @@
+name: Filter Binary Files
+
+on:
+  pull_request:
+    types:
+      - opened
+
+jobs:
+  filter:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Filter binary files
+        run: |
+          git diff --name-only ${{ github.base_ref }}...${{ github.head_ref }} | while read file; do
+            if [[ $file =~ \.(class|jar|DS_Store)$ ]]; then
+              echo "Removing binary file: $file"
+              git rm --cached "$file"
+            fi
+          done
+          git commit -m "Remove binary files" || true
+          git push || true
