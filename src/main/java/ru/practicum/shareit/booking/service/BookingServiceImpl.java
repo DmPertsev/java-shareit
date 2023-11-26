@@ -33,7 +33,6 @@ public class BookingServiceImpl implements BookingService {
     private final ItemRepository itemRepository;
     private final UserServiceImpl userServiceImpl;
 
-
     @Transactional(readOnly = true)
     @Override
     public BookingDto getById(Long id, Long userId) {
@@ -56,46 +55,50 @@ public class BookingServiceImpl implements BookingService {
         try {
             List<Booking> bookings;
             Pageable pageable = PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "start"));
-            switch (State.valueOf(state)) {
-                case ALL:
+
+            switch (state.toUpperCase()) {
+                case "ALL":
                     bookings = bookingRepository.findAllByItemOwnerId(userId, pageable);
                     break;
-                case CURRENT:
+                case "CURRENT":
                     bookings = bookingRepository.findAllByItemOwnerIdAndStartBeforeAndEndAfter(userId,
                             LocalDateTime.now(), LocalDateTime.now(), pageable);
                     break;
-                case PAST:
+                case "PAST":
                     bookings = bookingRepository.findAllByItemOwnerIdAndEndBefore(userId, LocalDateTime.now(),
                             pageable);
                     break;
-                case FUTURE:
+                case "FUTURE":
                     bookings = bookingRepository.findAllByItemOwnerIdAndStartAfter(userId, LocalDateTime.now(),
                             pageable);
                     break;
-                case WAITING:
+                case "WAITING":
                     bookings = bookingRepository.findAllByItemOwnerIdAndStatus(userId, Status.WAITING, pageable);
                     break;
-                case REJECTED:
+                case "REJECTED":
                     bookings = bookingRepository.findAllByItemOwnerIdAndStatus(userId, Status.REJECTED, pageable);
                     break;
                 default:
-                    throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
+                    throw new ValidationException("Unknown state: " + state);
             }
+
+            System.out.println("Retrieved bookings: " + bookings);
+
             return bookings.stream().map(BookingMapper::toDto).collect(Collectors.toList());
-        } catch (RuntimeException e) {
-            throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
+        } catch (IllegalArgumentException e) {
+            throw new ValidationException("Unknown state: " + state);
         }
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<BookingDto> getAllByBookerId(Long userId, String state, Integer from, Integer size) {
-        userServiceImpl.throwIfNotExist(userId);
-
         try {
+            userServiceImpl.throwIfNotExist(userId);
 
             List<Booking> bookings;
             Pageable pageable = PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "start"));
+
             switch (State.valueOf(state)) {
                 case ALL:
                     bookings = bookingRepository.findAllByBookerId(userId, pageable);
@@ -119,8 +122,11 @@ public class BookingServiceImpl implements BookingService {
                 default:
                     throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
             }
+
             return bookings.stream().map(BookingMapper::toDto).collect(Collectors.toList());
-        } catch (RuntimeException e) {
+        } catch (ObjectNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
             throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
         }
     }
@@ -141,7 +147,8 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(
                 () -> new ObjectNotFoundException("Бронирования нет: " + bookingId));
 
-        if (booking.getItem().getOwner().getId().equals(userId)) {
+        if (booking.getItem() != null && booking.getItem().getOwner() != null
+                && userId != null && userId.equals(booking.getItem().getOwner().getId())) {
             Status status = booking.getStatus();
             switch (status) {
                 case APPROVED:
@@ -156,7 +163,7 @@ public class BookingServiceImpl implements BookingService {
                     }
             }
         } else {
-            throw new ObjectNotFoundException("Пользователь не является владельцем Item");
+            throw new ObjectNotFoundException("Пользователь не является владельцем Item или значение ID равно null");
         }
         return BookingMapper.toDto(booking);
     }
@@ -178,6 +185,4 @@ public class BookingServiceImpl implements BookingService {
 
         booking.setItem(item);
     }
-
-
 }
